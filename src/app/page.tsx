@@ -1,7 +1,17 @@
 import Image from "next/image";
+import QRScanner from "./QRGenerator";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]"></div>
+    <div className="relative min-h-[100vh] h-full flex justify-center items-center">
+      <QRScanner />
+      <Image
+        src="/glass.png"
+        width={1600}
+        height={1200}
+        alt="glass image"
+        className="fixed top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
+      />
+    </div>
   );
 }
