@@ -3,43 +3,43 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, LayoutGrid, Link, Mail } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { QRCodeSVG } from "qrcode.react";
-import { Textarea } from "@/components/ui/textarea";
+import { Link, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
+import ColorPicker from "@/components/ColorPicker";
+import FileInput from "@/components/FileInput";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
+import FormField from "@/components/FormField";
 
 function QRGenerator() {
-  const [url, setUrl] = useState("");
-  const [color, setColor] = useState("#fff");
-  const [bgColor, setBgColor] = useState("#334155");
-  const [logo, setLogo] = useState<string | null>(null);
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [qrType, setQrType] = useState("mail");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [qrData, setQrData] = useState("");
+  const [foregroundColor, setForegroundColor] = useState("#fff");
+  const [backgroundColor, setBackgroundColor] = useState("#334155");
+  const [qrLogo, setQrLogo] = useState<string | null>(null);
+  const [uploadedLogoFile, setUploadedLogoFile] = useState<File | null>(null);
+  const [selectedQrType, setSelectedQrType] = useState("mail");
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
 
-  const handleDownload = (type: "png" | "svg") => {
-    const qrCodeElem = document.getElementById("qr-code");
+  const handleQrDownload = (format: "png" | "svg") => {
+    const qrCodeElement = document.getElementById("qr-code");
 
-    if (qrCodeElem) {
-      if (type === "png") {
-        toPng(qrCodeElem)
+    if (qrCodeElement) {
+      if (format === "png") {
+        toPng(qrCodeElement)
           .then((dataUrl) => {
             saveAs(dataUrl, "qr-code.png");
           })
           .catch((err) => {
             console.log("Error generating QR code", err);
           });
-      } else if (type === "svg") {
-        const svgElem = qrCodeElem.querySelector("svg");
+      } else if (format === "svg") {
+        const svgElement = qrCodeElement.querySelector("svg");
 
-        if (svgElem) {
-          const saveData = new Blob([svgElem.outerHTML], {
+        if (svgElement) {
+          const saveData = new Blob([svgElement.outerHTML], {
             type: "image/svg+xml;charset=utf-8",
           });
           saveAs(saveData, "qr-code.svg");
@@ -48,12 +48,12 @@ function QRGenerator() {
     }
   };
 
-  const handleEmailInput = () => {
-    const mailToLink = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(
-      message
+  const generateEmailQrCode = () => {
+    const mailToLink = `mailto:${recipientEmail}?subject=${emailSubject}&body=${encodeURIComponent(
+      emailBody
     )}`;
 
-    setUrl(mailToLink);
+    setQrData(mailToLink);
   };
 
   return (
@@ -71,11 +71,11 @@ function QRGenerator() {
                 defaultValue="mail"
                 className="space-y-6"
                 onValueChange={(val) => {
-                  setQrType(val);
-                  setUrl("");
+                  setSelectedQrType(val);
+                  setQrData("");
                 }}
               >
-                <TabsList className="w-full space-x-2 bg-slate-700 rounded-lg text-white">
+                <TabsList className="w-full space-x-2 bg-slate-700 rounded-xl text-white">
                   <TabsTrigger value="mail" className="w-full">
                     <Mail className="w-4 h-4 mr-2" />
                     Email
@@ -88,177 +88,93 @@ function QRGenerator() {
 
                 <TabsContent value="mail">
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        placeholder="Enter email"
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input
-                        id="subject"
-                        type="text"
-                        value={subject}
-                        placeholder="Enter subject"
-                        onChange={(e) => setSubject(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea
-                        id="message"
-                        value={message}
-                        placeholder="Enter message"
-                        onChange={(e) => setMessage(e.target.value)}
-                        className="h-24 resize-none"
-                      />
-                    </div>
-                    <div className="flex justify-end">
-                      <Button
-                        className=" bg-slate-700 text-white font-bold"
-                        onClick={handleEmailInput}
-                      >
-                        Generate Email QR Code
-                      </Button>
-                    </div>
+                    <FormField
+                      id="email"
+                      label="Email"
+                      type="email"
+                      value={recipientEmail}
+                      onChange={(e) => setRecipientEmail(e.target.value)}
+                      placeholder="Enter email"
+                    />
+                    <FormField
+                      id="subject"
+                      label="Subject"
+                      type="text"
+                      value={emailSubject}
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      placeholder="Enter subject"
+                    />
+                    <FormField
+                      id="message"
+                      label="Message"
+                      type="textarea"
+                      value={emailBody}
+                      onChange={(e) => setEmailBody(e.target.value)}
+                      placeholder="Enter message"
+                      className="h-24 resize-none"
+                    />
+
+                    <Button
+                      className=" bg-slate-700 text-white font-bold"
+                      onClick={generateEmailQrCode}
+                      size="lg"
+                    >
+                      Generate Email QR Code
+                    </Button>
                   </div>
                 </TabsContent>
 
                 <TabsContent value="url">
                   <div className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="url">URL</Label>
-                      <Input
-                        id="url"
-                        type="url"
-                        value={url}
-                        placeholder="https://example.com"
-                        onChange={(e) => setUrl(e.target.value)}
-                      />
-                    </div>
+                    <FormField
+                      id="url"
+                      label="URL"
+                      type="url"
+                      value={qrData}
+                      onChange={(e) => setQrData(e.target.value)}
+                      placeholder="https://example.com"
+                    />
                   </div>
                 </TabsContent>
               </Tabs>
 
               <div className="space-y-4">
                 <div className="flex space-x-4">
-                  <div className="space-y-2 flex-1">
-                    <Label htmlFor="color">QR Code Color</Label>
-                    <div className="flex items-center gap-1">
-                      <div
-                        className="relative w-12 h-12 rounded-md border"
-                        style={{ backgroundColor: color }}
-                      >
-                        <input
-                          type="color"
-                          value={color}
-                          onChange={(e) => setColor(e.target.value)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                      </div>
-                      <Input
-                        type="text"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 flex-1">
-                    <Label htmlFor="bgColor">Background Color</Label>
-                    <div className="flex items-center gap-1">
-                      <div
-                        className="relative w-12 h-12 rounded-md border"
-                        style={{ backgroundColor: bgColor }}
-                      >
-                        <input
-                          type="color"
-                          value={bgColor}
-                          onChange={(e) => setBgColor(e.target.value)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                      </div>
-                      <Input
-                        type="text"
-                        value={bgColor}
-                        onChange={(e) => setBgColor(e.target.value)}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="logo">Logo</Label>
-                  <Input
-                    type="file"
-                    id="logo"
-                    accept="image/*"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setLogoFile(e.target.files[0]);
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setLogo(reader.result as string);
-                        };
-                        reader.readAsDataURL(e.target.files[0]);
-                      }
-                    }}
+                  <ColorPicker
+                    label="QR Code Color"
+                    color={foregroundColor}
+                    onChange={setForegroundColor}
+                  />
+                  <ColorPicker
+                    label="Background Color"
+                    color={backgroundColor}
+                    onChange={setBackgroundColor}
                   />
                 </div>
-              </div>
-            </div>
-            <div className="relative flex-1 bg-slate-700 rounded-lg flex flex-col justify-center space-y-6">
-              <span>
-                <LayoutGrid className="w-8 h-8 text-white absolute top-4 right-4" />
-              </span>
 
-              <div id="qr-code" className="flex justify-center p-8">
-                <div className="relative rounded-xl  overflow-hidden">
-                  <QRCodeSVG
-                    value={url}
-                    size={256}
-                    fgColor={color}
-                    bgColor={bgColor}
-                    imageSettings={
-                      logo
-                        ? { src: logo, height: 50, width: 50, excavate: true }
-                        : undefined
+                <FileInput
+                  label="Logo"
+                  accept="image/*"
+                  onChange={(file) => {
+                    setUploadedLogoFile(file);
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setQrLogo(reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
                     }
-                  />
-                  {logo && (
-                    <img
-                      src={logo}
-                      alt="logo"
-                      className="absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-md border-none"
-                    />
-                  )}
-                </div>
-              </div>
-              <div className="flex p-2 sm:p-0 justify-center sm:flex-row sm:space-x-5 sm:space-y-0 flex-col space-x-0 space-y-4 pb-6">
-                <Button
-                  variant="outline"
-                  onClick={() => handleDownload("png")}
-                  className="bg-slate-700 text-white font-bold"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PNG
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => handleDownload("svg")}
-                  className="bg-slate-700 text-white font-bold"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download SVG
-                </Button>
+                  }}
+                />
               </div>
             </div>
+            <QRCodeDisplay
+              url={qrData}
+              color={foregroundColor}
+              bgColor={backgroundColor}
+              logo={qrLogo}
+              onDownload={handleQrDownload}
+            />
           </div>
         </CardContent>
       </Card>
