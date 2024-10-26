@@ -1,7 +1,7 @@
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
-import { Download, LayoutGrid } from "lucide-react";
+import { Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QRCodeDisplayProps {
