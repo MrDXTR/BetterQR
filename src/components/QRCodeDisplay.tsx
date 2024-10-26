@@ -2,6 +2,7 @@ import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Download, LayoutGrid } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface QRCodeDisplayProps {
   url: string;
@@ -19,34 +20,58 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
   onDownload,
 }) => {
   return (
-    <div className="relative flex-1 bg-slate-700 rounded-xl flex flex-col justify-center space-y-6">
-      <span>
-        <LayoutGrid className="w-8 h-8 text-white absolute top-4 right-4" />
-      </span>
-
-      <div id="qr-code" className="flex justify-center p-8">
-        <div className="relative rounded-xl overflow-hidden">
-          <QRCodeSVG
-            value={url}
-            size={256}
-            fgColor={color}
-            bgColor={bgColor}
-            imageSettings={
-              logo
-                ? { src: logo, height: 50, width: 50, excavate: true }
-                : undefined
-            }
-          />
-          {logo && (
-            <img
-              src={logo}
-              alt="logo"
-              className="absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-md border-none"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      className="relative flex-1 bg-slate-700 rounded-xl flex flex-col justify-center space-y-6"
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={url}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+          }}
+          id="qr-code"
+          className="flex justify-center p-8"
+        >
+          <div className="relative rounded-xl overflow-hidden">
+            <QRCodeSVG
+              value={url}
+              size={256}
+              fgColor={color}
+              bgColor={bgColor}
+              imageSettings={
+                logo
+                  ? { src: logo, height: 50, width: 50, excavate: true }
+                  : undefined
+              }
             />
-          )}
-        </div>
-      </div>
-      <div className="flex p-2 sm:p-0 justify-center sm:flex-row sm:space-x-5 sm:space-y-0 flex-col space-x-0 space-y-4 pb-6">
+            {logo && (
+              <motion.img
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                src={logo}
+                alt="logo"
+                className="absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-md border-none"
+              />
+            )}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.3 }}
+        className="flex p-2 sm:p-0 justify-center sm:flex-row sm:space-x-5 sm:space-y-0 flex-col space-x-0 space-y-4 pb-6"
+      >
         <Button
           variant="outline"
           onClick={() => onDownload("png")}
@@ -63,8 +88,8 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
           <Download className="w-4 h-4 mr-2" />
           Download SVG
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -11,6 +11,7 @@ import ColorPicker from "@/components/ColorPicker";
 import FileInput from "@/components/FileInput";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import FormField from "@/components/FormField";
+import { motion } from "framer-motion";
 
 function QRGenerator() {
   const [qrData, setQrData] = useState("");
@@ -57,7 +58,12 @@ function QRGenerator() {
   };
 
   return (
-    <div className="relative z-30 mx-6 my-4 flex max-w-[1250px] w-full min-h-[750px] h-full">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative z-30 mx-6 my-4 flex max-w-[1250px] w-full min-h-[750px] h-full"
+    >
       <Card className="flex-1 flex flex-col w-full h-auto mx-auto bg-[#ecf7ff]/80 backdrop-blur-md shadow-sm border-2 border-white/40 rounded-xl">
         <CardHeader>
           <CardTitle className="text-slate-700 text-2xl font-bold text-center">
@@ -178,7 +184,7 @@ function QRGenerator() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }
 
