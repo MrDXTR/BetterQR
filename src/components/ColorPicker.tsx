@@ -21,7 +21,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
           className="relative w-12 h-12 rounded-md border"
           style={{ backgroundColor: color }}
         >
-          <input
+          <Input
             type="color"
             value={color}
             onChange={(e) => onChange(e.target.value)}

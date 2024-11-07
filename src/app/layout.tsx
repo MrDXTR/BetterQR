@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "QR Code Generator",
+  title: "Better QR",
   description: "Generate QR Codes for your business",
 };
 

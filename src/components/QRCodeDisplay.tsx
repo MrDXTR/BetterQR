@@ -52,16 +52,6 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
                   : undefined
               }
             />
-            {logo && (
-              <motion.img
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
-                src={logo}
-                alt="logo"
-                className="absolute z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-md border-none"
-              />
-            )}
           </div>
         </motion.div>
       </AnimatePresence>
