@@ -12,9 +12,10 @@ import FileInput from "@/components/FileInput";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import FormField from "@/components/FormField";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function QRGenerator() {
-  const [qrData, setQrData] = useState("");
+  const [qrData, setQrData] = useState("https://manavchillar.vercel.app");
   const [foregroundColor, setForegroundColor] = useState("#fff");
   const [backgroundColor, setBackgroundColor] = useState("#334155");
   const [qrLogo, setQrLogo] = useState<string | null>(null);
@@ -64,11 +65,14 @@ function QRGenerator() {
       transition={{ duration: 0.5 }}
       className="relative z-30 mx-6 my-4 flex max-w-[1250px] w-full min-h-[750px] h-full"
     >
-      <Card className="flex-1 flex flex-col w-full h-auto mx-auto bg-[#ecf7ff]/80 backdrop-blur-md shadow-sm border-2 border-white/40 rounded-xl">
+      <Card className="flex-1 flex flex-col w-full h-auto mx-auto bg-card backdrop-blur-md shadow-sm border-2 border-primary/40/40 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-slate-700 text-2xl font-bold text-center">
-            QR Code Generator
-          </CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-card-foreground text-2xl font-bold text-center">
+              QR Code Generator
+            </CardTitle>
+            <ThemeToggle />
+          </div>
         </CardHeader>
         <CardContent className="flex-1">
           <div className="h-full flex flex-col md:flex-row gap-8">
@@ -78,15 +82,21 @@ function QRGenerator() {
                 className="space-y-6"
                 onValueChange={(val) => {
                   setSelectedQrType(val);
-                  setQrData("");
+                  setQrData("https://manavchillar.vercel.app");
                 }}
               >
-                <TabsList className="w-full space-x-2 bg-slate-700 rounded-xl text-white">
-                  <TabsTrigger value="mail" className="w-full">
+                <TabsList className="w-full space-x-2 bg-card-accent text-card-accent-foreground rounded-xl">
+                  <TabsTrigger
+                    value="mail"
+                    className="w-full data-[state=active]:bg-primary-foreground data-[state=active]:text-primary"
+                  >
                     <Mail className="w-4 h-4 mr-2" />
                     Email
                   </TabsTrigger>
-                  <TabsTrigger value="url" className="w-full">
+                  <TabsTrigger
+                    value="url"
+                    className="w-full data-[state=active]:bg-primary-foreground data-[state=active]:text-primary"
+                  >
                     <Link className="w-4 h-4 mr-2" />
                     URL
                   </TabsTrigger>
@@ -98,6 +108,7 @@ function QRGenerator() {
                       id="email"
                       label="Email"
                       type="email"
+                      className="border-primary/40"
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
                       placeholder="Enter email"
@@ -106,6 +117,7 @@ function QRGenerator() {
                       id="subject"
                       label="Subject"
                       type="text"
+                      className="border-primary/40"
                       value={emailSubject}
                       onChange={(e) => setEmailSubject(e.target.value)}
                       placeholder="Enter subject"
@@ -117,11 +129,11 @@ function QRGenerator() {
                       value={emailBody}
                       onChange={(e) => setEmailBody(e.target.value)}
                       placeholder="Enter message"
-                      className="h-24 resize-none"
+                      className="h-24 resize-none border-primary/40"
                     />
 
                     <Button
-                      className=" bg-slate-700 text-white font-bold"
+                      className="bg-card text-card-foreground border-2 border-card-accent/20 font-bold transition-all duration-300 hover:scale-105 hover:bg-card-accent hover:text-card-accent-foreground hover:border-card-accent-foreground"
                       onClick={generateEmailQrCode}
                       size="lg"
                     >
@@ -136,6 +148,7 @@ function QRGenerator() {
                       id="url"
                       label="URL"
                       type="url"
+                      className="border-primary/40"
                       value={qrData}
                       onChange={(e) => setQrData(e.target.value)}
                       placeholder="https://example.com"
@@ -147,31 +160,25 @@ function QRGenerator() {
               <div className="space-y-4">
                 <div className="flex space-x-4">
                   <ColorPicker
-                    label="QR Code Color"
-                    color={foregroundColor}
-                    onChange={setForegroundColor}
-                  />
-                  <ColorPicker
                     label="Background Color"
                     color={backgroundColor}
                     onChange={setBackgroundColor}
                   />
+                  <FileInput
+                    label="Logo"
+                    accept="image/*"
+                    onChange={(file) => {
+                      setUploadedLogoFile(file);
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setQrLogo(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
                 </div>
-
-                <FileInput
-                  label="Logo"
-                  accept="image/*"
-                  onChange={(file) => {
-                    setUploadedLogoFile(file);
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setQrLogo(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
               </div>
             </div>
             <QRCodeDisplay

@@ -25,14 +25,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             type="color"
             value={color}
             onChange={(e) => onChange(e.target.value)}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer "
           />
         </div>
         <Input
           type="text"
           value={color}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1"
+          className="flex-1 border-primary/40"
         />
       </div>
     </div>

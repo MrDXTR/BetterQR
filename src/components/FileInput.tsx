@@ -10,10 +10,11 @@ interface FileInputProps {
 
 const FileInput: React.FC<FileInputProps> = ({ label, accept, onChange }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Label htmlFor={label}>{label}</Label>
       <Input
         type="file"
+        className="border-primary/40"
         id={label}
         accept={accept}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

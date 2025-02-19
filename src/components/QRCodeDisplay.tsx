@@ -24,7 +24,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative flex-1 bg-slate-700 rounded-xl flex flex-col justify-center space-y-6"
+      className="relative flex-1 bg-card-accent text-card-accent-foreground rounded-xl flex flex-col justify-center space-y-6"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -40,7 +40,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
           id="qr-code"
           className="flex justify-center p-8"
         >
-          <div className="relative rounded-xl overflow-hidden">
+          <div className="relative rounded-md overflow-hidden border-4 p-2 dark:border-black border-white">
             <QRCodeSVG
               value={url}
               size={256}
@@ -65,7 +65,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
         <Button
           variant="outline"
           onClick={() => onDownload("png")}
-          className="bg-slate-700 text-white font-bold"
+          className="bg-card text-card-foreground border-2 border-card-accent/20 font-bold transition-all duration-300 hover:scale-105 hover:bg-card-accent hover:text-card-accent-foreground hover:border-card-accent-foreground"
         >
           <Download className="w-4 h-4 mr-2" />
           Download PNG
@@ -73,7 +73,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
         <Button
           variant="outline"
           onClick={() => onDownload("svg")}
-          className="bg-slate-700 text-white font-bold"
+          className="bg-card text-card-foreground border-2 border-card-accent/20 font-bold transition-all duration-300 hover:scale-105 hover:bg-card-accent hover:text-card-accent-foreground hover:border-card-accent-foreground"
         >
           <Download className="w-4 h-4 mr-2" />
           Download SVG
