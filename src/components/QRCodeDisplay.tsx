@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QRCodeDisplayProps {
@@ -10,6 +10,7 @@ interface QRCodeDisplayProps {
   bgColor: string;
   logo: string | null;
   onDownload: (type: "png" | "svg") => void;
+  isLoading?: boolean;
 }
 
 const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
@@ -18,7 +19,10 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
   bgColor,
   logo,
   onDownload,
+  isLoading = false,
 }) => {
+  const [error, setError] = useState<string | null>(null);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -62,12 +66,18 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
         transition={{ delay: 0.3, duration: 0.3 }}
         className="flex p-2 sm:p-0 justify-center sm:flex-row sm:space-x-5 sm:space-y-0 flex-col space-x-0 space-y-4 pb-6"
       >
+        {error && <p className="text-destructive text-sm mb-2">{error}</p>}
         <Button
           variant="outline"
           onClick={() => onDownload("png")}
+          disabled={isLoading}
           className="bg-card text-card-foreground border-2 border-card-accent/20 font-bold transition-all duration-300 hover:scale-105 hover:bg-card-accent hover:text-card-accent-foreground hover:border-card-accent-foreground"
         >
-          <Download className="w-4 h-4 mr-2" />
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
           Download PNG
         </Button>
         <Button

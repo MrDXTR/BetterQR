@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, Mail } from "lucide-react";
+import { Link, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -13,9 +13,18 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 import FormField from "@/components/FormField";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import debounce from "lodash/debounce";
+
+const LIMITS = {
+  URL: 2000,
+  EMAIL: 200,
+  SUBJECT: 200,
+  BODY: 2000,
+};
 
 function QRGenerator() {
   const [qrData, setQrData] = useState("https://manavchillar.vercel.app");
+  const [inputValue, setInputValue] = useState(qrData);
   const [foregroundColor, setForegroundColor] = useState("#fff");
   const [backgroundColor, setBackgroundColor] = useState("#334155");
   const [qrLogo, setQrLogo] = useState<string | null>(null);
@@ -24,6 +33,14 @@ function QRGenerator() {
   const [recipientEmail, setRecipientEmail] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const debouncedSetQrData = useCallback(
+    debounce((value: string) => {
+      setQrData(value);
+    }, 500),
+    []
+  );
 
   const handleQrDownload = (format: "png" | "svg") => {
     const qrCodeElement = document.getElementById("qr-code");
@@ -50,12 +67,24 @@ function QRGenerator() {
     }
   };
 
-  const generateEmailQrCode = () => {
-    const mailToLink = `mailto:${recipientEmail}?subject=${emailSubject}&body=${encodeURIComponent(
-      emailBody
-    )}`;
+  const generateEmailQrCode = async () => {
+    setIsGenerating(true);
+    try {
+      const totalLength =
+        recipientEmail.length + emailSubject.length + emailBody.length + 13; // Additional characters for mailto format
 
-    setQrData(mailToLink);
+      if (totalLength > LIMITS.URL) {
+        console.error("Email content too long for QR code");
+        return;
+      }
+
+      const mailToLink = `mailto:${recipientEmail}?subject=${emailSubject}&body=${encodeURIComponent(
+        emailBody
+      )}`;
+      setQrData(mailToLink);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -112,6 +141,8 @@ function QRGenerator() {
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
                       placeholder="Enter email"
+                      maxLength={LIMITS.EMAIL}
+                      required
                     />
                     <FormField
                       id="subject"
@@ -121,6 +152,7 @@ function QRGenerator() {
                       value={emailSubject}
                       onChange={(e) => setEmailSubject(e.target.value)}
                       placeholder="Enter subject"
+                      maxLength={LIMITS.SUBJECT}
                     />
                     <FormField
                       id="message"
@@ -130,13 +162,18 @@ function QRGenerator() {
                       onChange={(e) => setEmailBody(e.target.value)}
                       placeholder="Enter message"
                       className="h-24 resize-none border-primary/40"
+                      maxLength={LIMITS.BODY}
                     />
 
                     <Button
                       className="bg-card text-card-foreground border-2 border-card-accent/20 font-bold transition-all duration-300 hover:scale-105 hover:bg-card-accent hover:text-card-accent-foreground hover:border-card-accent-foreground"
                       onClick={generateEmailQrCode}
                       size="lg"
+                      disabled={isGenerating}
                     >
+                      {isGenerating ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : null}
                       Generate Email QR Code
                     </Button>
                   </div>
@@ -149,9 +186,14 @@ function QRGenerator() {
                       label="URL"
                       type="url"
                       className="border-primary/40"
-                      value={qrData}
-                      onChange={(e) => setQrData(e.target.value)}
+                      value={inputValue}
+                      onChange={(e) => {
+                        setInputValue(e.target.value);
+                        debouncedSetQrData(e.target.value);
+                      }}
                       placeholder="https://example.com"
+                      maxLength={LIMITS.URL}
+                      required
                     />
                   </div>
                 </TabsContent>
