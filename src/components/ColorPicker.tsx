@@ -20,9 +20,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onChange,
 }) => {
   const isValidColor = (color: string) => {
-    const s = new Option().style;
-    s.color = color;
-    return s.color !== "";
+    // Check if it's a valid hex color
+    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    if (hexRegex.test(color)) return true;
+
+    // Check if it's a valid RGB/RGBA color
+    const rgbRegex = /^rgb[a]?\([\d\s,%.]+\)$/;
+    if (rgbRegex.test(color)) return true;
+
+    // Check if it's a valid HSL/HSLA color
+    const hslRegex = /^hsl[a]?\([\d\s,%.\-]+\)$/;
+    if (hslRegex.test(color)) return true;
+
+    return false;
   };
 
   return (
