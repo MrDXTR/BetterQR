@@ -25,7 +25,7 @@ BetterQR is a QR code generator built with **Next.js** and **TypeScript** that a
 To start the development server, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/better-qr.git
+git clone https://github.com/MrDxtr/betterqr.git
 cd better-qr
 npm install
 # or
