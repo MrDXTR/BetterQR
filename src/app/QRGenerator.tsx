@@ -111,7 +111,7 @@ function QRGenerator() {
                 className="space-y-6"
                 onValueChange={(val) => {
                   setSelectedQrType(val);
-                  setQrData("");
+                  setQrData("https://manavchillar.vercel.app");
                 }}
               >
                 <TabsList className="w-full space-x-2 bg-card-accent text-card-accent-foreground rounded-xl">
