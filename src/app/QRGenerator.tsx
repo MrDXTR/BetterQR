@@ -24,7 +24,7 @@ const LIMITS = {
 
 function QRGenerator() {
   const [qrData, setQrData] = useState("https://manavchillar.vercel.app");
-  const [inputValue, setInputValue] = useState(qrData);
+  const [inputValue, setInputValue] = useState("");
   const [foregroundColor, setForegroundColor] = useState("#fff");
   const [backgroundColor, setBackgroundColor] = useState("#334155");
   const [qrLogo, setQrLogo] = useState<string | null>(null);
