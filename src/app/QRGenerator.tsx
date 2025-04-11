@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, Mail, Loader2 } from "lucide-react";
+import { LinkIcon, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -14,6 +14,8 @@ import FormField from "@/components/FormField";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import debounce from "lodash/debounce";
+import Link from "next/link";
+import { FaGithub } from "react-icons/fa";
 
 const LIMITS = {
   URL: 2000,
@@ -97,10 +99,28 @@ function QRGenerator() {
       <Card className="flex-1 flex flex-col w-full h-auto mx-auto bg-card backdrop-blur-md shadow-sm border-2 border-primary/40/40 rounded-xl">
         <CardHeader>
           <div className="flex justify-between items-center">
+  
             <CardTitle className="text-card-foreground text-2xl font-bold text-center">
               QR Code Generator
             </CardTitle>
-            <ThemeToggle />
+        
+     
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Link
+              href="https://github.com/MrDXTR/betterqr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="outline"
+                size="icon"
+                className="bg-card-accent text-card-accent-foreground border-primary/40 hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
+               >
+                <FaGithub className="h-5 w-5" />
+              </Button>
+            </Link>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1">
@@ -126,7 +146,7 @@ function QRGenerator() {
                     value="url"
                     className="w-full data-[state=active]:bg-primary-foreground data-[state=active]:text-primary"
                   >
-                    <Link className="w-4 h-4 mr-2" />
+                    <LinkIcon className="w-4 h-4 mr-2" />
                     URL
                   </TabsTrigger>
                 </TabsList>
